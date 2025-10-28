@@ -7,11 +7,7 @@ on:
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:      
-    inputs:
-      aws_region:
-        description: 'AWS Region'
-        required: true
-        default: 'eu-north-1' 
+  
 permissions:
   contents: write
 
@@ -34,7 +30,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
-        aws-region: ${{ inputs.aws_region }}  # Use the input parameter
+        aws-region: ${{ secrets.aws_region }}  # Use the input parameter
         role-session-name: MySessionName
         role-skip-session-tagging: true
 
