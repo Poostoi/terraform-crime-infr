@@ -35,11 +35,6 @@ jobs:
         role-session-name: MySessionName
         role-skip-session-tagging: true
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
     - name: Terraform Init
       run: terraform init
 
@@ -65,10 +60,6 @@ jobs:
     environment: prod
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    defaults:
-      run:
-        working-directory: .
-        shell: bash
 
     steps:
     - name: Checkout
@@ -81,14 +72,6 @@ jobs:
         aws-region: ${{ secrets.aws_region }}
         role-session-name: MySessionName
         role-skip-session-tagging: true
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-    - name: Terraform Init
-      run: terraform init
 
     - name: terraform apply
       uses: dflook/terraform-apply@v1

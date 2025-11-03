@@ -8,6 +8,7 @@ resource "aws_instance" "servers" {
 
 
   tags = {
-    Name = each.value.name
+    Name    = each.value.name
+    Project = "crime-rate"
   }
 }
