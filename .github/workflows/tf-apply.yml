@@ -1,0 +1,28 @@
+
+name: 'terraform-apply'
+
+on:
+  workflow_dispatch:      
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  terraform-apply:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    environment: prod
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - uses: ./.github/actions/setup-aws-terraform
+      with:
+        use-format: true
+        aws-role  : ${{ secrets.AWS_OIDC_ROLE_ARN }}
+        aws-region: ${{ secrets.aws_region }}
+
+    - name: terraform apply
+      run : terraform apply -auto-approve

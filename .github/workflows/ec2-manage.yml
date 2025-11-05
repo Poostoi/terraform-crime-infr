@@ -10,7 +10,6 @@ on:
         options:
           - stop
           - start
-          - destroy
 
 permissions:
   contents: read
@@ -35,7 +34,6 @@ jobs:
     - name: Stop EC2 Instances
       if: github.event.inputs.action == 'stop'
       run: |
-        echo "Stopping EC2 instances with tag Project=crime-rate..."
         INSTANCE_IDS=$(aws ec2 describe-instances \
           --filters "Name=instance-state-name,Values=running" "Name=tag:Project,Values=crime-rate" \
           --query "Reservations[*].Instances[*].InstanceId" \
@@ -44,15 +42,12 @@ jobs:
         if [ -z "$INSTANCE_IDS" ]; then
           echo "No running instances found"
         else
-          echo "Stopping instances: $INSTANCE_IDS"
           aws ec2 stop-instances --instance-ids $INSTANCE_IDS
-          echo "Instances stopped successfully"
         fi
 
     - name: Start EC2 Instances
       if: github.event.inputs.action == 'start'
       run: |
-        echo "Starting EC2 instances with tag Project=crime-rate..."
         INSTANCE_IDS=$(aws ec2 describe-instances \
           --filters "Name=instance-state-name,Values=stopped" "Name=tag:Project,Values=crime-rate" \
           --query "Reservations[*].Instances[*].InstanceId" \
@@ -61,15 +56,6 @@ jobs:
         if [ -z "$INSTANCE_IDS" ]; then
           echo "No stopped instances found"
         else
-          echo "Starting instances: $INSTANCE_IDS"
           aws ec2 start-instances --instance-ids $INSTANCE_IDS
-          echo "Instances started successfully"
         fi
 
-    - name: Terraform Destroy
-      if: github.event.inputs.action == 'destroy'
-      run: |
-        echo "WARNING: This will destroy ALL infrastructure!"
-        terraform init
-        terraform destroy -auto-approve
-        echo "Infrastructure destroyed successfully"

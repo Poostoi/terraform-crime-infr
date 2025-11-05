@@ -1,0 +1,38 @@
+name: 'terraform-configure-aws'
+
+inputs:
+  use-format: 
+    description: 'Использовать ли terraform fmt'
+    default: false
+    type: boolean
+  aws-role:  
+    description: 'AWS arn роль'
+    required: true
+  aws-region:  
+    description: 'AWS регион'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-role }}
+        aws-region: ${{ inputs.aws_region }}
+        role-session-name: MySessionName
+        role-skip-session-tagging: true
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      shell: bash
+      run: terraform init
+
+    - name: Terraform Format
+      if: ${{ inputs.use-format }} 
+      shell: bash
+      run: terraform fmt -check

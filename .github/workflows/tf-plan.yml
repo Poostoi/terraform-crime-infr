@@ -1,0 +1,40 @@
+
+name: 'terraform-plan'
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:      
+  
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  terraform-plan:
+    name: 'Terraform Plan'
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        working-directory: .
+        shell: bash
+
+    steps:
+    - uses: ./.github/actions/setup-aws-terraform
+      with:
+        use-format: true
+        aws-role: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+        aws-region: ${{ secrets.aws_region }}
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
