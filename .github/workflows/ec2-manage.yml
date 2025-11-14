@@ -24,6 +24,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Debug OIDC Info
+      run: |
+        echo "Repository: ${{ github.repository }}"
+        echo "Ref: ${{ github.ref }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Expected in Trust Policy: repo:Poostoi/terraform-crime-infr:*"
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
