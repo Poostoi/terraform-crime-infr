@@ -23,7 +23,7 @@ jobs:
       with:
         use-format: true
         aws-role  : ${{ secrets.AWS_OIDC_ROLE_ARN }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ secrets.aws_region }}
 
     - name: terraform apply
       run : terraform apply -auto-approve
